@@ -163,7 +163,11 @@ jobs:
         run: sbt 'project ${{ matrix.project }}' '++ ${{ matrix.scala }}' doc
 
       - name: Make target directories
-        if: ${{ 'push' != 'pull_request' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main') }}
+        # Artifact publishing (sbt tlCiRelease -> Sonatype) must NOT run from this fork.
+    # The only upstream guard here is the release-branch ref, and our baseline is
+    # dispatched on exactly that branch, so the job armed a real Maven Central publish
+    # of every module. Gate it off by canonical repo identity.
+    if: ${{ github.repository == 'typelevel/cats' && 'push' != 'pull_request' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main') }}
         run: mkdir -p algebra-laws/jvm/target free/.js/target testkit/.native/target testkit/.js/target unidocs/target core/.native/target free/.jvm/target free/.native/target alleycats-laws/native/target laws/.native/target alleycats-core/.js/target alleycats-laws/js/target kernel/.jvm/target core/.js/target kernel/.js/target algebra-laws/native/target kernel-laws/native/target laws/.js/target core/.jvm/target alleycats-core/.native/target kernel/.native/target algebra-core/.jvm/target kernel-laws/jvm/target algebra-core/.js/target alleycats-laws/jvm/target laws/.jvm/target algebra-core/.native/target alleycats-core/.jvm/target kernel-laws/js/target testkit/.jvm/target algebra-laws/js/target project/target
 
       - name: Compress target directories
