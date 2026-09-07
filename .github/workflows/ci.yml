@@ -535,7 +535,7 @@ jobs:
         run: sbt docs/tlSite
 
       - name: Publish site
-        if: ${{ 'push' != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.repository == 'typelevel/cats' && ('push' != 'pull_request' && github.ref == 'refs/heads/main') }}
         uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
